@@ -4,7 +4,6 @@ export default function List({ activities }) {
       {activities.map((activity) => {
         return <li key={activity.id}>{activity.name}</li>;
       })}
-      ;
     </ul>
   );
 }
