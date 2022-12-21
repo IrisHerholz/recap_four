@@ -1,16 +1,38 @@
 import "./App.css";
-import { useState } from "react";
-import Form from "./Components/Form.js";
+import { useEffect, useState } from "react";
 import { uid } from "uid";
-import List from "./Components/List";
+import Form from "./Components/AddNewActivity";
+import List from "./Components/ActivityList";
+import WeatherDisplay from "./Components/WeatherDisplay";
 
 function App() {
-  const [activities, setActivities] = useState([]);
-  const [weather, setWeather] = useState(true);
+  // initial activities
+  const [activities, setActivities] = useState([
+    { name: "go in the park", isGood: true, id: uid() },
+    { name: "clean kitchen", isGood: false, id: uid() },
+  ]);
+  // store fetched data
+  const [weather, setWeather] = useState();
+  const [condition, setCondition] = useState();
+  const [location, setLocation] = useState();
+  const [temperature, setTemperature] = useState();
+  // filter array of entries
   const goodActivities = activities.filter((activity) => activity.isGood);
   const badActivities = activities.filter((activity) => !activity.isGood);
 
-  console.log(activities);
+  useEffect(() => {
+    async function fetchWeather() {
+      const response = await fetch(
+        "https://example-apis.vercel.app/api/weather"
+      );
+      const data = await response.json();
+      setWeather(data.isGoodWeather);
+      setCondition(data.condition);
+      setLocation(data.location);
+      setTemperature(data.temperature);
+    }
+    fetchWeather();
+  }, []);
 
   function handleAddActivity(event) {
     event.preventDefault();
@@ -23,12 +45,17 @@ function App() {
         id: uid(),
       },
     ]);
-    //event.target.reset()
-    //event.target.data.name.focus()
+    event.target.reset();
+    event.target.data.name.focus();
   }
 
   return (
     <div className="App">
+      <WeatherDisplay
+        condition={condition}
+        location={location}
+        temperature={temperature}
+      />
       <Form onAddActivity={handleAddActivity} />
       <List activities={weather ? goodActivities : badActivities} />
     </div>
