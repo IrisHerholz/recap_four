@@ -7,8 +7,5 @@ Implemented:
 - form component
 - list component
 - filter activities
-
-To-Do:
-
 - fetch weather data
 - optional: styling
